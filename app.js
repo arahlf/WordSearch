@@ -5,6 +5,12 @@ $(function() {
             throw error;
         }
 
+        var gridSize = json.length;
+        var flattenedData = json.reduce(function(a, b) {
+            return a.concat(b);
+        });
+
+
         var size = 30;
         var spacing = 2;
 
@@ -12,30 +18,28 @@ $(function() {
             .append('svg');
 
         var group = svg.selectAll('g')
-            .data(json)
+            .data(flattenedData)
             .enter()
             .append('g')
-            .selectAll('g')
-                .data(function(data) { return data; })
-                .enter()
-                .append('g')
-                .attr('transform', function(data, x, y) {
-                    var x = (x * size) + (x * spacing);
-                    var y = (y * size) + (y * spacing);
+            .attr('transform', function(data, index) {
+                var x = (index % gridSize) * (size + spacing);
+                var y = Math.floor(index / gridSize) * (size + spacing);
 
-                    return 'translate(' + x + ', ' + y + ')';
-                });
+                return 'translate(' + x + ', ' + y + ')';
+            });
 
         group.append('rect')
-            .attr('width', size)
-            .attr('height', size);
+            .attr('x', 1)
+            .attr('y', 1)
+            .attr('width', size - 2)
+            .attr('height', size - 2);
 
         group.append('text')
             .text(function(data) {
                 return data;
             })
-            .attr('y', size / 2 + 4)
-            .attr('x', size / 2 - 4);
+            .attr('y', size / 2 + 5)
+            .attr('x', size / 2 - 5);
        
     });
 
